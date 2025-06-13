@@ -4,61 +4,92 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 )
 
 func main() {
+	const (
+		Create = "create"
+		Read   = "read"
+		Update = "update"
+		Delete = "delete"
+	)
+
+	tasks := make([]string, 0)
+
 	fmt.Println("Welcome to the TO DO List CLI app!")
-	var tasks []string
 
 	for {
-		fmt.Println("\nEnter your command (create, read, update, delete): ")
-		command, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-		command = strings.TrimSpace(command)
+		fmt.Println()
+		fmt.Println("Enter your command (create, read, update, delete): ")
+		var command string
+		fmt.Scan(&command)
 
 		switch command {
-		case "create":
-			fmt.Print("Enter task name: ")
-			task, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-			task = strings.TrimSpace(task)
-			if task != "" {
-				tasks = append(tasks, task)
-				fmt.Println("Task added!")
-			} else {
-				fmt.Println("Task name cannot be empty!")
+		case Create:
+			fmt.Println("Enter task name: ")
+			newTask, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+			newTask = newTask[:len(newTask)-1] // remove '\n' at the end
+
+			tasks = append(tasks, newTask)
+
+		case Read:
+			for i, task := range tasks {
+				fmt.Printf("%d. %s\n", i+1, task)
 			}
 
-		case "read":
-			if len(tasks) == 0 {
-				fmt.Println("No tasks yest!")
-			} else {
-				fmt.Println("Your tasks:")
-				for i, task := range tasks {
-					fmt.Printf("%d. %s\n", i+1, task)
+		case Update:
+			fmt.Println("Enter task name to update: ")
+			input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+			input = input[:len(input)-1] // remove '\n' at the end
+
+			indexToUpdate := -1
+			for i, task := range tasks {
+				if task == input {
+					indexToUpdate = i
+					break
 				}
 			}
 
-		case "update":
-			if len(tasks) == 0 {
-				fmt.Println("No tasks to update!")
-				continue
-			}
-			fmt.Print("Enter task number to update: ")
-			taskNumStr, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-			taskNumStr = strings.TrimSpace(taskNumStr)
-
-			var taskNum int
-			if _, err := fmt.Scanf(taskNumStr, "%d", &taskNum); err != nil || taskNum < 1 || taskNum > len(tasks) {
-				fmt.Println("Invalid task number!")
+			if indexToUpdate == -1 {
+				fmt.Println("Invalid name. Please try again.")
 				continue
 			}
 
-			removedTask := tasks[taskNum-1]
-			tasks = append(tasks[:taskNum-1], tasks[taskNum:]...)
-			fmt.Printf("Removed task #%d ('%s') successfully!\n", taskNum, removedTask)
+			fmt.Println("Enter new task name: ")
+			newTaskName, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+			newTaskName = newTaskName[:len(newTaskName)-1] // remove '\n' at the end
 
+			if len(newTaskName) < 3 {
+				fmt.Println("The new task name is too short! Please, try again.")
+				continue
+			}
+
+			tasks[indexToUpdate] = newTaskName
+			fmt.Printf("Updated task #%d with name \"%s\" successfully!\n", indexToUpdate, newTaskName)
+
+		case Delete:
+			fmt.Println("Enter task name to remove: ")
+			input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+			input = input[:len(input)-1] // remove '\n' at the end
+
+			indexToRemove := -1
+			for i, task := range tasks {
+				if task == input {
+					indexToRemove = i
+					break
+				}
+			}
+
+			if indexToRemove == -1 {
+				fmt.Println("Invalid name. Please try again.")
+				continue
+			}
+
+			oldTaskName := tasks[indexToRemove]
+			tasks = append(tasks[:indexToRemove], tasks[indexToRemove+1:]...)
+			fmt.Printf("Removed task #%d with name \"%s\" successfully!\n", indexToRemove, oldTaskName)
 		default:
-			fmt.Println("Invalid command! Available command: create, read, update, delete")
+			fmt.Println("Invalid command! Please, try again!")
 		}
 	}
 }
