@@ -28,7 +28,7 @@ func main() {
 		case Create:
 			fmt.Println("Enter task name: ")
 			newTask, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-			newTask = newTask[:len(newTask)-1] // remove '\n' at the end
+			newTask = newTask[:len(newTask)-1]
 
 			tasks = append(tasks, newTask)
 
@@ -40,7 +40,7 @@ func main() {
 		case Update:
 			fmt.Println("Enter task name to update: ")
 			input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-			input = input[:len(input)-1] // remove '\n' at the end
+			input = input[:len(input)-1]
 
 			indexToUpdate := -1
 			for i, task := range tasks {
@@ -57,7 +57,7 @@ func main() {
 
 			fmt.Println("Enter new task name: ")
 			newTaskName, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-			newTaskName = newTaskName[:len(newTaskName)-1] // remove '\n' at the end
+			newTaskName = newTaskName[:len(newTaskName)-1]
 
 			if len(newTaskName) < 3 {
 				fmt.Println("The new task name is too short! Please, try again.")
@@ -70,7 +70,7 @@ func main() {
 		case Delete:
 			fmt.Println("Enter task name to remove: ")
 			input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-			input = input[:len(input)-1] // remove '\n' at the end
+			input = input[:len(input)-1]
 
 			indexToRemove := -1
 			for i, task := range tasks {
